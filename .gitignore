@@ -91,9 +91,6 @@ Thumbs.db
 vcpkg_installed/
 conan*/
 
-# External dependencies (keep this from original)
-/external
-
 # Generated documentation
 docs/html/
 docs/latex/
