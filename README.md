@@ -11,6 +11,15 @@ A real-time water ripple simulation using OpenGL.
 
 ## Building
 
+### Clone the repository
+```sh
+git clone https://github.com/devniteshkumar/ripple-simulation.git --recurse-submodules
+```
+**Update submodule using**
+```sh
+git submodule update --init --recursive
+```
+
 ### Prerequisites
 
 - CMake 3.10 or higher
