@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 
 #include <FileWatch.hpp>
-// #include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <memory>
 #include <string>
 
@@ -23,19 +23,17 @@ public:
 
     void use();
 
-    // void setBool(const std::string& name, bool value) const;
-    // void setInt(const std::string& name, int value) const;
-    // void setFloat(const std::string& name, float value) const;
-    // void setMat4(const std::string& name, glm::mat4 value) const;
-    // void setVec3(const std::string& name, float x, float y, float z) const;
-    // void setVec3(const std::string& name, glm::vec3 vector) const;
+    void setBool(const std::string &name, bool value) const;
+    void setInt(const std::string &name, int value) const;
+    void setFloat(const std::string &name, float value) const;
+    void setMat4(const std::string &name, glm::mat4 value) const;
+    void setVec3(const std::string &name, float x, float y, float z) const;
+    void setVec3(const std::string &name, glm::vec3 vector) const;
+    void setVec2(const std::string &name, glm::vec2 vector) const;
     void reload();
     void setupWatcher(const std::string &directory);
     void change();
     void autoreload();
-    void setUniform4(const std::string &name, float x, float y, float z, float w) const;
-    void setUniform1i(const std::string &name, int value) const;
-    void setUniform1f(const std::string &name, float value) const;
 };
 
 #endif

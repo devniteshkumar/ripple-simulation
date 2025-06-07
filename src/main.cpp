@@ -15,6 +15,21 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float &time)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        mouseX = static_cast<int>(x);
+        mouseY = static_cast<int>(y);
+        time = 0.0f;
+    }
+}
+
 int main()
 {
     glfwInit();
@@ -22,7 +37,11 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 600, "OpenGL Triangle", NULL, NULL);
+    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int screenWidth = mode->width;
+    int screenHeight = mode->height;
+
+    GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "OpenGL Triangle", NULL, NULL);
     if (window == nullptr)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -31,6 +50,7 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
+    glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -61,31 +81,45 @@ int main()
     layout.push<float>(2);
     layout.push<float>(2);
     va.bind();
-    va.AddBuffer(vb, layout); // Set layout
+    va.AddBuffer(vb, layout);
     indexBuffer ib(indices, sizeof(indices) / sizeof(unsigned int));
 
     texture Texture(fileio_getpath("assets/water_texture.jpg"));
     Texture.bind();
-    shaderProgram.setUniform1i("uTexture", 0);
+    shaderProgram.setInt("uTexture", 0);
 
     renderer Renderer;
     Renderer.draw(va, ib, shaderProgram);
-    // int location = glGetUniformLocation(shaderProgram.ID, "uColor");
-    // assert(location != -1);
 
-    // float r = 0.0f;
-    // float increment = 0.05f;
-    // Main loop
+    int mouseX = -1, mouseY = -1;
+    float time = 1000.0f;
+
     while (!glfwWindowShouldClose(window))
     {
-        Renderer.clear();
-        // shaderProgram.setUniform4("uColor", r, 0.3f, 0.8f, 1.0f);
-        // r += increment;
-        // if (r > 1.0f || r < 0.0f)
-        //     increment *= -1;
+        process_input(window, mouseX, mouseY, time);
+        time += 0.05f;
 
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+        shaderProgram.setFloat("time", time);
+        shaderProgram.setFloat("heightScale", 0.03f);
+
+        if (mouseX >= 0 && mouseY >= 0)
+        {
+            shaderProgram.setVec2("rippleCenter", glm::vec2(
+                                                      static_cast<float>(mouseX) / fbWidth,
+                                                      1.0f - static_cast<float>(mouseY) / fbHeight));
+        }
+        else
+        {
+            shaderProgram.setVec2("rippleCenter", glm::vec2(-1.0f, -1.0f));
+        }
+
+        Renderer.clear();
         Renderer.draw(va, ib, shaderProgram);
         shaderProgram.autoreload();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
