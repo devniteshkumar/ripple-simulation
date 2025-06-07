@@ -15,42 +15,46 @@ A real-time water ripple simulation using OpenGL.
 
 - CMake 3.10 or higher
 - OpenGL 3.3 compatible graphics card
-- GLFW3
-- GLEW
 
 ### Build Instructions
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+cmake .
 ```
-
+If you are using VSCode, you can just run the task (generally, `Ctrl + Shift + B`).
+If not, run `cmake . && ./build/ogt`.
 ### Running
 
-```bash
-./ripple_simulation
-```
-
 ## Project Structure
-
 ```
-ripple-simulation/
-├── src/
-│   ├── main.cpp          # Main application entry point
-│   ├── shader/           # GLSL shader files
-│   │   ├── ripple.vert   # Vertex shader
-│   │   └── ripple.frag   # Fragment shader
-│   ├── renderer/         # Rendering components
-│   ├── utils/           # Utility functions
-│   └── texture/         # Texture handling
-├── assets/
-│   └── water_texture.jpg # Water texture asset
-├── CMakeLists.txt       # CMake build configuration
-└── README.md           # This file
+.
+├── assets
+│   └── water_texture.jpg
+├── build
+│   └── ogt
+├── CMakeCache.txt
+├── CMakeLists.txt
+└── src
+    ├── main.cpp
+    ├── renderer
+    │   ├── buffers.cpp
+    │   ├── buffers.hpp
+    │   ├── renderer.cpp
+    │   ├── renderer.hpp
+    │   ├── shader.cpp
+    │   ├── shader.hpp
+    │   ├── texture.cpp
+    │   └── texture.hpp
+    ├── shader
+    │   ├── ripple.frag
+    │   └── ripple.vert
+    ├── texture
+    └── utils
+        ├── fileio.cpp
+        ├── fileio.hpp
+        ├── FileWatch.hpp
+        └── stb_image.h
 ```
-
 ## Controls
 
 - Click to create ripples
