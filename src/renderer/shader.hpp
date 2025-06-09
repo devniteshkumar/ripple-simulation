@@ -20,6 +20,7 @@ public:
     unsigned int ID;
 
     Shader(std::string vertexPath, std::string fragmentPath, bool enableAutoReload = true);
+    ~Shader();
 
     void use();
 
