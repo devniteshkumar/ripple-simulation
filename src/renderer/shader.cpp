@@ -103,6 +103,12 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, bool enableAuto
     }
 }
 
+Shader::~Shader()
+{
+    if (ID)
+        glDeleteProgram(ID);
+}
+
 void Shader::use()
 {
     glUseProgram(ID);
@@ -165,6 +171,8 @@ void Shader::setupWatcher(const std::string &directory)
 
 void Shader::reload()
 {
+    if (ID)
+        glDeleteProgram(ID);
     this->ID = Shader(vertexPath, fragmentPath, false).ID;
     std::cout << "Shader reloaded" << std::endl;
 }

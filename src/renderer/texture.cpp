@@ -18,11 +18,6 @@ texture::texture(const std::string &path)
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_localBuffer);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    if (m_localBuffer)
-    {
-        stbi_image_free(m_localBuffer);
-    }
 }
 
 texture::~texture()
