@@ -123,6 +123,8 @@ int main()
         ImGui::SliderFloat("Height Scale", &myFloat, 0.0f, 0.1f);
         static float timeSpeed = 1.0f;
         ImGui::SliderFloat("Time Scale", &timeSpeed, 0.1f, 2.0f);
+        static float decay = 0.675f;
+        ImGui::SliderFloat("Decay Scale", &decay, 0.1f, 2.0f);
 
         ImGui::End();
         // Your simulation logic
@@ -135,6 +137,7 @@ int main()
         shaderProgram.setFloat("time", time);
         shaderProgram.setFloat("timeSpeed", timeSpeed);
         shaderProgram.setFloat("heightScale", myFloat);
+        shaderProgram.setFloat("decay", decay);
 
         if (mouseX >= 0 && mouseY >= 0)
         {
