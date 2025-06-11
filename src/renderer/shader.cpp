@@ -103,12 +103,6 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, bool enableAuto
     }
 }
 
-Shader::~Shader()
-{
-    if (ID)
-        glDeleteProgram(ID);
-}
-
 void Shader::use()
 {
     glUseProgram(ID);
