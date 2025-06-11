@@ -9,6 +9,10 @@
 #include "renderer/buffers.hpp"
 #include "renderer/texture.hpp"
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 // Callback to adjust viewport on window resize
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -59,6 +63,16 @@ int main()
         return -1;
     }
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+
+    ImGui::StyleColorsDark(); // or ImGui::StyleColorsClassic();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 450");
+
     float vertices[] = {
         -0.5f, 0.5f, 0.0f, 1.0f, // Top-left
         0.5f, 0.5f, 1.0f, 1.0f,  // Top-right
@@ -96,6 +110,22 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        // Start ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // ImGui UI
+        ImGui::Begin("Control Panel"); // side pane
+        ImGui::Text("Parameters:");
+
+        static float myFloat = 0.03f;
+        ImGui::SliderFloat("Height Scale", &myFloat, 0.0f, 0.1f);
+        static float timeSpeed = 1.0f;
+        ImGui::SliderFloat("Time Scale", &timeSpeed, 0.1f, 2.0f);
+
+        ImGui::End();
+        // Your simulation logic
         process_input(window, mouseX, mouseY, time);
         time += 0.05f;
 
@@ -103,7 +133,8 @@ int main()
         glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
         shaderProgram.setFloat("time", time);
-        shaderProgram.setFloat("heightScale", 0.03f);
+        shaderProgram.setFloat("timeSpeed", timeSpeed);
+        shaderProgram.setFloat("heightScale", myFloat);
 
         if (mouseX >= 0 && mouseY >= 0)
         {
@@ -116,13 +147,23 @@ int main()
             shaderProgram.setVec2("rippleCenter", glm::vec2(-1.0f, -1.0f));
         }
 
+        // Render scene
         Renderer.clear();
         Renderer.draw(va, ib, shaderProgram);
         shaderProgram.autoreload();
 
+        // Render ImGui
+        ImGui::Render();                                        // <--- REQUIRED
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // <--- REQUIRED
+
+        // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
     glfwTerminate();

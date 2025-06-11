@@ -10,34 +10,54 @@ set(OpenGL_GL_PREFERENCE GLVND)
 set(GLFW_BUILD_DOCS OFF)
 set(GLFW_BUILD_EXAMPLES OFF)
 set(GLFW_BUILD_TESTS OFF)
+add_subdirectory(external/glfw)
 
 find_package(OpenGL REQUIRED)
-
-add_subdirectory(external/glfw)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -g")
 set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address")
 
-add_executable(ogt
-    ${CMAKE_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_SOURCE_DIR}/external/glad/src/glad.c
-    ${CMAKE_SOURCE_DIR}/src/renderer/shader.cpp
-    ${CMAKE_SOURCE_DIR}/src/utils/fileio.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/renderer.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/buffers.cpp
-    ${CMAKE_SOURCE_DIR}/src/renderer/texture.cpp
-)
-target_include_directories(ogt PRIVATE
-    ${CMAKE_SOURCE_DIR}/external/glad/include
-    ${CMAKE_SOURCE_DIR}/external/glfw/include
-    ${CMAKE_SOURCE_DIR}/external/glm
-    ${CMAKE_SOURCE_DIR}/external
-    ${CMAKE_SOURCE_DIR}/src/utils
-    ${CMAKE_SOURCE_DIR}/src
+set(SOURCES
+    src/main.cpp
+    external/glad/src/glad.c
+    src/renderer/shader.cpp
+    src/renderer/renderer.cpp
+    src/renderer/buffers.cpp
+    src/renderer/texture.cpp
+    src/utils/fileio.cpp
 )
 
+add_executable(ogt ${SOURCES})
+
+target_include_directories(ogt PRIVATE
+    external/glad/include
+    external/glfw/include
+    external/glm
+    external
+    src/utils
+    src
+)
+
+set(IMGUI_DIR external/imgui)
+set(IMGUI_BACKEND_DIR ${IMGUI_DIR}/backends)
+
+add_library(imgui STATIC
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_BACKEND_DIR}/imgui_impl_glfw.cpp
+    ${IMGUI_BACKEND_DIR}/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(imgui PUBLIC
+    ${IMGUI_DIR}
+    ${IMGUI_BACKEND_DIR}
+)
 
 target_link_libraries(ogt
     OpenGL::GL
     glfw
+    imgui
 )
