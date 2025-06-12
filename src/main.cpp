@@ -119,11 +119,11 @@ int main()
         ImGui::Begin("Control Panel"); // side pane
         ImGui::Text("Parameters:");
 
-        static float myFloat = 0.01f;
+        static float myFloat = 0.083f;
         ImGui::SliderFloat("Height Scale", &myFloat, 0.0f, 0.1f);
-        static float timeSpeed = 0.5f;
+        static float timeSpeed = 0.1f;
         ImGui::SliderFloat("Time Scale", &timeSpeed, 0.1f, 2.0f);
-        static float decay = 1.5f;
+        static float decay = 3.0f;
         ImGui::SliderFloat("Decay Scale", &decay, 0.0f, 5.0f);
 
         ImGui::End();
