@@ -18,7 +18,7 @@ void main()
     float r = length(pos);
     float acTime = time * timeSpeed;
     vec2 dir = (r > 1e-4) ? normalize(pos) : vec2(0.0);
-    float ripple = sin(20.0 * r - 6.0 * acTime) * heightScale * exp(-decay * r) * exp(-0.4 * decay * acTime);
+    float ripple = sin(200.0 * r - 6.0 * acTime) * heightScale * exp(-decay * r) * exp(-0.4 * decay * acTime);
     vec2 displacedUV = uv + dir * ripple;
     vec4 baseColor = texture(u_Texture, displacedUV);
     FragColor = vec4(baseColor.rgb, 1.0);

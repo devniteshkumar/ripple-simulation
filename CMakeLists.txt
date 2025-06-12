@@ -54,6 +54,7 @@ add_library(imgui STATIC
 target_include_directories(imgui PUBLIC
     ${IMGUI_DIR}
     ${IMGUI_BACKEND_DIR}
+    external/glfw/include
 )
 
 target_link_libraries(ogt
