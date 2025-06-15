@@ -13,25 +13,55 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include <vector>
+#include <glm/glm.hpp>
+
+struct Ripple
+{
+    glm::vec2 center;
+    float startTime;
+};
+std::vector<Ripple> ripples;
+const int MAX_RIPPLES = 10;
+
 // Callback to adjust viewport on window resize
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float &time)
+void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float currentTime, std::vector<Ripple> &ripples, bool &mouseWasPressed)
 {
+    ImGuiIO &io = ImGui::GetIO();
+    bool mouseIsPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+    if (io.WantCaptureMouse)
+        return;
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    if (mouseIsPressed && !mouseWasPressed)
     {
         double x, y;
         glfwGetCursorPos(window, &x, &y);
         mouseX = static_cast<int>(x);
         mouseY = static_cast<int>(y);
-        time = 0.0f;
+
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+        glm::vec2 rippleCenter = glm::vec2(
+            static_cast<float>(mouseX) / fbWidth,
+            1.0f - static_cast<float>(mouseY) / fbHeight);
+
+        if (ripples.size() >= MAX_RIPPLES)
+            ripples.erase(ripples.begin()); // remove oldest
+
+        ripples.push_back({rippleCenter, currentTime});
     }
+
+    mouseWasPressed = mouseIsPressed;
 }
 
 int main()
@@ -98,7 +128,8 @@ int main()
     va.AddBuffer(vb, layout);
     indexBuffer ib(indices, sizeof(indices) / sizeof(unsigned int));
 
-    texture Texture(fileio_getpath("assets/water_texture.jpg"));
+    // texture Texture(fileio_getpath("assets/water_texture.jpg"));
+    texture Texture(fileio_getpath("assets/gradient.jpg"));
     Texture.bind();
     shaderProgram.setInt("uTexture", 0);
 
@@ -107,6 +138,7 @@ int main()
 
     int mouseX = -1, mouseY = -1;
     float time = 1000.0f;
+    bool mouseWasPressed = false;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -116,19 +148,25 @@ int main()
         ImGui::NewFrame();
 
         // ImGui UI
-        ImGui::Begin("Control Panel"); // side pane
+        ImGui::Begin("Control Panel");
         ImGui::Text("Parameters:");
 
         static float myFloat = 0.083f;
         ImGui::SliderFloat("Height Scale", &myFloat, 0.0f, 0.1f);
         static float timeSpeed = 0.1f;
         ImGui::SliderFloat("Time Scale", &timeSpeed, 0.1f, 2.0f);
-        static float decay = 3.0f;
+        static float decay = 1.0f;
         ImGui::SliderFloat("Decay Scale", &decay, 0.0f, 5.0f);
 
+        if (ImGui::Button("Reset Ripples"))
+        {
+            ripples.clear();
+        }
+
         ImGui::End();
+
         // Your simulation logic
-        process_input(window, mouseX, mouseY, time);
+        process_input(window, mouseX, mouseY, time, ripples, mouseWasPressed);
         time += 0.05f;
 
         int fbWidth, fbHeight;
@@ -139,15 +177,11 @@ int main()
         shaderProgram.setFloat("heightScale", myFloat);
         shaderProgram.setFloat("decay", decay);
 
-        if (mouseX >= 0 && mouseY >= 0)
+        shaderProgram.setInt("numRipples", ripples.size());
+        for (int i = 0; i < ripples.size(); ++i)
         {
-            shaderProgram.setVec2("rippleCenter", glm::vec2(
-                                                      static_cast<float>(mouseX) / fbWidth,
-                                                      1.0f - static_cast<float>(mouseY) / fbHeight));
-        }
-        else
-        {
-            shaderProgram.setVec2("rippleCenter", glm::vec2(-1.0f, -1.0f));
+            shaderProgram.setVec2("rippleCenters[" + std::to_string(i) + "]", ripples[i].center);
+            shaderProgram.setFloat("rippleStartTimes[" + std::to_string(i) + "]", ripples[i].startTime);
         }
 
         // Render scene
@@ -156,8 +190,8 @@ int main()
         shaderProgram.autoreload();
 
         // Render ImGui
-        ImGui::Render();                                        // <--- REQUIRED
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); // <--- REQUIRED
+        ImGui::Render();                                        
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData()); 
 
         // Swap buffers
         glfwSwapBuffers(window);
