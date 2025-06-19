@@ -30,7 +30,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float currentTime, std::vector<Ripple> &ripples, bool &mouseWasPressed)
+void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float currentTime, std::vector<Ripple> &ripples, bool &mouseWasPressed, int &allowed)
 {
     ImGuiIO &io = ImGui::GetIO();
     bool mouseIsPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
@@ -55,7 +55,7 @@ void process_input(GLFWwindow *window, int &mouseX, int &mouseY, float currentTi
             static_cast<float>(mouseX) / fbWidth,
             1.0f - static_cast<float>(mouseY) / fbHeight);
 
-        if (ripples.size() >= MAX_RIPPLES)
+        if (ripples.size() >= allowed)
             ripples.erase(ripples.begin()); // remove oldest
 
         ripples.push_back({rippleCenter, currentTime});
@@ -98,10 +98,11 @@ int main()
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
 
-    ImGui::StyleColorsDark(); // or ImGui::StyleColorsClassic();
+    // ImGui::StyleColorsDark();
+    ImGui::StyleColorsClassic();
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 450");
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     float vertices[] = {
         -0.5f, 0.5f, 0.0f, 1.0f, // Top-left
@@ -157,6 +158,8 @@ int main()
         ImGui::SliderFloat("Time Scale", &timeSpeed, 0.1f, 2.0f);
         static float decay = 1.0f;
         ImGui::SliderFloat("Decay Scale", &decay, 0.0f, 5.0f);
+        static int allowed = 5;
+        ImGui::InputInt("Number of ripples", &allowed);
 
         if (ImGui::Button("Reset Ripples"))
         {
@@ -165,8 +168,8 @@ int main()
 
         ImGui::End();
 
-        // Your simulation logic
-        process_input(window, mouseX, mouseY, time, ripples, mouseWasPressed);
+        // Simulation logic
+        process_input(window, mouseX, mouseY, time, ripples, mouseWasPressed, allowed);
         time += 0.05f;
 
         int fbWidth, fbHeight;
