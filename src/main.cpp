@@ -160,6 +160,10 @@ int main()
         ImGui::SliderFloat("Decay Scale", &decay, 0.0f, 5.0f);
         static int allowed = 5;
         ImGui::InputInt("Number of ripples", &allowed);
+        static float frequency = 200.0f;
+        ImGui::InputFloat("Frequency", &frequency);
+        static float speed = 6.0f;
+        ImGui::InputFloat("Speed", &speed);
 
         if (ImGui::Button("Reset Ripples"))
         {
@@ -179,6 +183,8 @@ int main()
         shaderProgram.setFloat("timeSpeed", timeSpeed);
         shaderProgram.setFloat("heightScale", myFloat);
         shaderProgram.setFloat("decay", decay);
+        shaderProgram.setFloat("frequency", frequency);
+        shaderProgram.setFloat("speed", speed);
 
         shaderProgram.setInt("numRipples", ripples.size());
         for (int i = 0; i < ripples.size(); ++i)
