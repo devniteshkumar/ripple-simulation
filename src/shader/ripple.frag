@@ -13,6 +13,8 @@ const int MAX_RIPPLES = 10;
 uniform int numRipples;
 uniform vec2 rippleCenters[MAX_RIPPLES];
 uniform float rippleStartTimes[MAX_RIPPLES];
+uniform float frequency;
+uniform float speed;
 
 uniform sampler2D u_Texture;
 
@@ -30,7 +32,7 @@ void main()
         if (acTime < 0.0) continue; // ignore future ripples
 
         vec2 dir = (r > 1e-4) ? normalize(pos) : vec2(0.0);
-        float ripple = sin(200.0 * r - 6.0 * acTime)
+        float ripple = sin(frequency * r - speed * acTime)
                      * heightScale
                      * exp(-decay * (1.0 - r))
                      * exp(-0.4 * decay * acTime);
