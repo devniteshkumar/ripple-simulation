@@ -100,6 +100,8 @@ Alternatively, run `cmake . && ./build/ogt`.
   - **Speed**: Control the propagation speed of ripples
   - **Reset Ripples**: Clear all active ripples from the simulation
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/devniteshkumar/ripple-simulation)
+
 ## License
 
 MIT License
