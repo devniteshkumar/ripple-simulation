@@ -4,12 +4,18 @@ A real-time water ripple simulation using OpenGL with an interactive GUI control
 
 ## Features
 
-- Real-time ripple effects
+- Real-time ripple effects with improved realism
 - Interactive water surface
-- Shader-based rendering
-- **GUI Control Panel** with adjustable parameters:
+- **Multiple simultaneous ripples** (up to 10 ripples)
+- Shader-based rendering with enhanced physics
+- **Comprehensive GUI Control Panel** with adjustable parameters:
   - Height Scale slider (0.0 - 0.1)
   - Time Scale slider (0.1 - 2.0)
+  - Decay Scale slider (0.0 - 5.0)
+  - Number of ripples input (customizable limit)
+  - Frequency input (wave frequency control)
+  - Speed input (ripple propagation speed)
+  - **Reset Ripples button** (clear all active ripples)
 - Hot-reload shader support
 - Memory-safe implementation with Address Sanitizer support
 
@@ -50,6 +56,7 @@ Alternatively, run `cmake . && ./build/ogt`.
 ```
 .
 ├── assets
+│   ├── gradient.jpg
 │   └── water_texture.jpg
 ├── build
 │   └── ogt
@@ -82,11 +89,16 @@ Alternatively, run `cmake . && ./build/ogt`.
 
 ## Controls
 
-- **Left Click**: Create ripples at cursor position
+- **Left Click**: Create ripples at cursor position (multiple ripples supported)
 - **ESC**: Exit application
 - **GUI Controls**: Use the Control Panel window to adjust:
-  - Height Scale: Controls the amplitude of the ripple effect
-  - Time Scale: Controls the speed of the ripple animation
+  - **Height Scale**: Controls the amplitude of the ripple effect (0.0 - 0.1)
+  - **Time Scale**: Controls the speed of the ripple animation (0.1 - 2.0)
+  - **Decay Scale**: Controls how quickly ripples fade over time (0.0 - 5.0)
+  - **Number of ripples**: Set the maximum number of simultaneous ripples
+  - **Frequency**: Adjust the wave frequency for ripple density
+  - **Speed**: Control the propagation speed of ripples
+  - **Reset Ripples**: Clear all active ripples from the simulation
 
 ## License
 
