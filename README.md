@@ -102,7 +102,5 @@ Alternatively, run `cmake . && ./build/ogt`.
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/devniteshkumar/ripple-simulation)
 
-## License
-
-MIT License
+[LICENSE](LICENSE)
 
