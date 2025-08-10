@@ -45,7 +45,7 @@
 ## About The Project
 <div align="center">
   <a href="https://github.com/devniteshkumar/ripple-simulation">
-    <img width="80%" alt="ripple-simulation-demo" src="assets/ReadmeGIF.gif">
+    <img width="80%" alt="ripple-simulation-demo" src="https://media.githubusercontent.com/media/devniteshkumar/ripple-simulation/master/assets/ReadmeGIF.gif">
   </a>
 </div>
 
